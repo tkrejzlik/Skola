@@ -1,4 +1,6 @@
-def matrix_ctor():
+MAX_ITERATIONS = 1000
+import copy
+def matrix_ctor(): #vytvareni uvodni matice
 
     real=[]
     pom = 1
@@ -12,7 +14,7 @@ def matrix_ctor():
 
     return real
 
-def print_matrix(list):
+def print_matrix(list): #tisk matice
     curr = "---MATRIX---" + '\n'
 
     for i in range(3):
@@ -23,8 +25,7 @@ def print_matrix(list):
 
     print(curr)
 
-
-def possible_ways(list):
+def possible_ways(list): #vrací seznam s možnými moves
     actual_i = 0
     actual_j = 0
     location = []
@@ -53,34 +54,48 @@ def possible_ways(list):
 
 
 
-def get_hierarchy(matrix):
+def get_hierarchy(list): #vrací hierarchii
     final_state = [[1,2,3],[4,5,6],[7,8,0]]
     x = 0
     for i in range(3):
         for j in range(3):
-            if matrix[i][j] == final_state[i][j]:
+            if list[i][j] == final_state[i][j]:
                 x += 1
 
     return x
 
-"""def swap(matrix,i,j):
-    possible_ways(matrix)
-"""
+def swap(ct_matrix,i,j): #swap 0 a cisla na miste, kam lze vlozit 0
+    for x in range(3):
+        for y in range(3):
+            if ct_matrix[x][y] == 0:
+                actual_i = x #lokace 0
+                actual_j = y #lokace 0
+    current = ct_matrix[i][j]
+    ct_matrix[actual_i][actual_j] = current
+    ct_matrix[i][j] = 0
 
-
+def solve(matrix):
+    iter_count = 0
+    final_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+    while matrix != final_state and iter_count < MAX_ITERATIONS:
+        best_place = -1
+        best_hierarchy = 0
+        for i in range(len(possible_ways(matrix))):
+            new_list = copy.deepcopy(matrix)
+            loc_i = possible_ways(new_list)[i][0]
+            loc_j = possible_ways(new_list)[i][1]
+            swap(new_list,loc_i,loc_j)
+            if get_hierarchy(new_list) > best_hierarchy:
+                best_hierarchy = get_hierarchy(new_list)
+                best_place = i
+        swap(matrix,possible_ways(matrix)[best_place][0],possible_ways(matrix)[best_place][1])
+        print_matrix(matrix)
+        iter_count += 1
 
 def main():
     matrix = matrix_ctor()
     print_matrix(matrix)
-    possible_ways(matrix)
+    solve(matrix)
+
 
 main()
-
-
-
-
-
-
-
-
-

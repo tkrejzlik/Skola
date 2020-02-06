@@ -1,4 +1,4 @@
-MAX_ITERATIONS = 1000
+MAX_ITERATIONS = 100000000000
 import copy
 def matrix_ctor(): #vytvareni uvodni matice
 
@@ -25,7 +25,7 @@ def print_matrix(list): #tisk matice
 
     print(curr)
 
-def possible_ways(list): #vrací seznam s možnými moves
+def possible_ways(list): #vrací dvojrozmerny seznam s možnými moves
     actual_i = 0
     actual_j = 0
     location = []
@@ -53,6 +53,14 @@ def possible_ways(list): #vrací seznam s možnými moves
     return possible_moves
 
 
+def get_blanked_space(list):
+    location = []
+    for i in range(3):
+        for j in range(3):
+            if list[i][j] == 0:
+                location.append(i)
+                location.append(j)
+    return location
 
 def get_hierarchy(list): #vrací hierarchii
     final_state = [[1,2,3],[4,5,6],[7,8,0]]
@@ -77,18 +85,25 @@ def swap(ct_matrix,i,j): #swap 0 a cisla na miste, kam lze vlozit 0
 def solve(matrix):
     iter_count = 0
     final_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+    before_move = []
     while matrix != final_state and iter_count < MAX_ITERATIONS:
+        actual = copy.deepcopy(possible_ways(matrix))
+        for x in range(len(actual)):
+            if actual[x] == before_move:
+                del actual[x]
+                break
         best_place = -1
         best_hierarchy = 0
-        for i in range(len(possible_ways(matrix))):
+        for i in range(len(actual)):
             new_list = copy.deepcopy(matrix)
-            loc_i = possible_ways(new_list)[i][0]
-            loc_j = possible_ways(new_list)[i][1]
+            loc_i = actual[i][0]
+            loc_j = actual[i][1]
+            before_move = copy.deepcopy(get_blanked_space(matrix))
             swap(new_list,loc_i,loc_j)
             if get_hierarchy(new_list) > best_hierarchy:
                 best_hierarchy = get_hierarchy(new_list)
                 best_place = i
-        swap(matrix,possible_ways(matrix)[best_place][0],possible_ways(matrix)[best_place][1])
+        swap(matrix,actual[best_place][0],actual[best_place][1])
         print_matrix(matrix)
         iter_count += 1
 

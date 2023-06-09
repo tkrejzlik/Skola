@@ -2,6 +2,7 @@ import pygame
 import random
 import time
 
+
 # Definice barev
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)

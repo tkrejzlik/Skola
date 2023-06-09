@@ -1,6 +1,6 @@
 import pygame
 import random
-
+import time
 
 # Definice barev
 BLACK = (0, 0, 0)
@@ -69,34 +69,42 @@ running = True
 snake = [[10,15]]
 move = [0,0]
 direction = ""
+last_key_time = time.time()
+key_delay = 0.05
+
 while running:
-    if game_over:
-        running = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT and direction != "right":
-                move = [-1,0]
-                direction = "left"
-            elif event.key == pygame.K_RIGHT and direction != "left":
-                move = [1,0]
-                direction = "right"
-            elif event.key == pygame.K_DOWN and direction != "up":
-                move = [0,1]
-                direction = "down"
-            elif event.key == pygame.K_UP and direction != "down":
-                move = [0,-1]
-                direction = "up"
+            current_time = time.time()
+            time_diff = current_time - last_key_time
+            if time_diff >= key_delay:
+                if event.key == pygame.K_LEFT and direction != "right":
+                    move = [-1, 0]
+                    direction = "left"
+                elif event.key == pygame.K_RIGHT and direction != "left":
+                    move = [1, 0]
+                    direction = "right"
+                elif event.key == pygame.K_DOWN and direction != "up":
+                    move = [0, 1]
+                    direction = "down"
+                elif event.key == pygame.K_UP and direction != "down":
+                    move = [0, -1]
+                    direction = "up"
+                last_key_time = current_time
 
     # Vykreslení plánu
     screen.fill(BLACK)
     for x in range(GRID_WIDTH):
         for y in range(GRID_HEIGHT):
             pygame.draw.rect(screen, BLACK, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
-    draw_snake()
-    if check_snake_hits_boundaries(snake[0][0], snake[0][1]) or check_snake_collision_with_itself():
+    if check_snake_hits_boundaries(snake[-1][0], snake[-1][1]):
         running = False
+    draw_snake()
+    if check_snake_collision_with_itself():
+        running = False
+        continue
     draw_food(food_location[0], food_location[1])
     check_snake_food_collision()
     pygame.display.flip()

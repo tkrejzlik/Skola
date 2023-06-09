@@ -46,6 +46,7 @@ def draw_snake(): #funkce vykreslí všechny části hada
     for i in range(len(snake)):
         pygame.draw.rect(screen, WHITE,( snake[i][0] * CELL_SIZE, snake[i][1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
+
 def check_snake_food_collision():
     if snake[-1] == food_location: #hlava hada narazila na jídlo
         new_body_block = [snake[-1][0] + move[0],snake[-1][1] + move[1]]
@@ -54,12 +55,12 @@ def check_snake_food_collision():
 
 def check_snake_collision_with_itself(): # hlídá, jestli po změně souřadnic hlavy nenarazila hlava do těla
     head = snake[-1]                     # vezmou se souřadnice hlavy hada a kontroluje se,
-    for i in range(len(snake)-2):        # jestli není její souřadnice stejná jako nějaká souřadnice zbytku hada(=kolize)
-        if i in head:
+    for i in range(len(snake)-2):                   # jestli není její souřadnice stejná jako nějaká souřadnice zbytku hada(=kolize)
+        if snake[i] == head:
             return True
 
 def check_snake_hits_boundaries(head_x, head_y):
-    if head_x > 40 or head_y > 40 or head_x < 0 or head_y < 0:
+    if head_x >= 40 or head_y >= 40 or head_x < 0 or head_y < 0:
         return True
 
 # Hlavní smyčka hry
